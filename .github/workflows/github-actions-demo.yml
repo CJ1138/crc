@@ -16,4 +16,4 @@ jobs:
           project_id: ${{ secrets.GCS_PROJECT }}
           export_default_credentials: true
       - run: ls ${{ github.workspace }}
-      - run: gsutil -m rsync -R /home/runner/work/crc/crc gs://crc-resume
+      - run: gsutil -m rsync -R ${{ github.workspace }}/content gs://crc-resume
