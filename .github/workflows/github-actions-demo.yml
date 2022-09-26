@@ -15,4 +15,4 @@ jobs:
           service_account_key: ${{ secrets.GCS_SA_KEY }}
           project_id: ${{ secrets.GCS_PROJECT }}
           export_default_credentials: true
-      - run: gsutil -m rsync -R / gs://crc-resume
+      - run: gsutil -m rsync -R /crc gs://crc-resume
