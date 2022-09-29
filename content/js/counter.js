@@ -6,7 +6,7 @@ function counter(){
     .then((response) => response.json())
     .then((data) => {
         document.getElementById("counter").innerHTML = 
-            '<h4>You are visitor number: ' + data + '</h4>';
+            '<span>You are visitor number: </span><span id="count">' + data + '</span>';
 })};
 
 counter();
