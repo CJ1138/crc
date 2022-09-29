@@ -10,9 +10,9 @@ describe('Page Content Loads Correctly', () => {
     it('Checks the blog link', ()=>{
         cy.visit('https://chrisjohnson.tech')
 
-        cy.contains('Technical Blog')//.click()
+        cy.contains('Technical Blog').click()
 
-        //cy.contains('Recent Posts')
+        cy.contains('Recent Posts')
     })
 
     it('Checks for Visitor Counter', ()=>{
