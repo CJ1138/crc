@@ -2,13 +2,13 @@
 
 describe('Page Content Loads Correctly', () => {
     it('Finds the words "Professional Experience"', ()=>{
-        cy.visit('http://127.0.0.1:5500/content/')
+        cy.visit('http://chrisjohnson.tech')
 
         cy.contains("Professional Experience")
     })
 
     it('Checks the blog link', ()=>{
-        cy.visit('http://127.0.0.1:5500/content/')
+        cy.visit('https://chrisjohnson.tech')
 
         cy.contains('Technical Blog')//.click()
 
@@ -16,7 +16,7 @@ describe('Page Content Loads Correctly', () => {
     })
 
     it('Checks for Visitor Counter', ()=>{
-        cy.visit('http://127.0.0.1:5500/content/')
+        cy.visit('https://chrisjohnson.tech')
 
         cy.contains('You are visitor number')
 
