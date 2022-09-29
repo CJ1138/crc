@@ -28,6 +28,10 @@ a:visited {
     color: white;
 }
 
+a {
+    color: white;
+}
+
 i{
     padding-right: 10px;
 }
