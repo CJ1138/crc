@@ -30,6 +30,9 @@ jobs:
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
 
+      - run: gsutil mb gs://$GCS_BUCKET
+      - run: gcloud ch iam allUsers:objectViewer gs://$GCS_BUCKET
+
       - id: 'sync_content'
         name: Sync Content to Test Bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
@@ -40,4 +43,4 @@ jobs:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
     
-      - run: gsutil rb gs://$GCS_BUCKET
+      - run: gsutil -m rm -r gs://$GCS_BUCKET
