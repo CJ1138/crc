@@ -8,6 +8,9 @@ on:
 env:
   GCS_BUCKET: ${{ secrets.TEST_BUCKET }}
 
+permissions:
+  id-token: write # This is required for requesting the JWT
+
 jobs:
   qa-deploy_and_test:
     runs-on: ubuntu-latest
