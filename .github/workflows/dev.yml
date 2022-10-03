@@ -37,6 +37,5 @@ jobs:
       - name: Run Page Content Tests
         uses: cypress-io/github-action@v4 # use the explicit version number
         with:
-          with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
