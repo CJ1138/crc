@@ -13,7 +13,7 @@ permissions:
   id-token: write # This is required for requesting the JWT
 
 jobs:
-  qa-deploy_and_test:
+  qa_deploy_and_test:
     runs-on: ubuntu-latest
     steps:
       - id: 'checkout'
@@ -30,6 +30,9 @@ jobs:
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
 
+      - run: gsutil mb gs://$GCS_BUCKET
+      - run: gsutil iam ch allUsers:objectViewer gs://$GCS_BUCKET
+
       - id: 'sync_content'
         name: Sync Content to Test Bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
@@ -37,6 +40,12 @@ jobs:
       - name: Run Page Content Tests
         uses: cypress-io/github-action@v4 # use the explicit version number
         with:
-          with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
+    
+      - run: gsutil rm -r gs://$GCS_BUCKET
+
+      - name: create pull request
+        run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
