@@ -39,3 +39,5 @@ jobs:
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
+    
+      - run: gsutil rb gs://$GCS_BUCKET
