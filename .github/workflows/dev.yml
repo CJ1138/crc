@@ -15,7 +15,7 @@ permissions:
 jobs:
   qa-deploy_and_test:
     runs-on: ubuntu-latest
-    #container: cypress/browsers:node12.18.3-chrome87-ff82
+    container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
       - id: 'checkout'
         name: Checkout Repo
@@ -35,8 +35,8 @@ jobs:
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
-      #- name: Cypress run --spec ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
-      #  uses: cypress-io/github-action@v4 # use the explicit version number
-      #  with:
+      - name: Cypress run --spec ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
+        uses: cypress-io/github-action@v4 # use the explicit version number
+        with:
           # Specify Browser since container image is compile with Firefox
-      #    browser: chrome
+          browser: chrome
