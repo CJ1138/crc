@@ -30,6 +30,8 @@ jobs:
       - name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
 
+      - run: echo ${{ secrets.API_KEY }} >> ${{ github.workspace }}/content/js/config.js
+
       - id: 'sync_content'
         name: Sync Content to Test Bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET

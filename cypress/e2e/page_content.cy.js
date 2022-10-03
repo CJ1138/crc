@@ -17,7 +17,7 @@ describe('Page Content Loads Correctly', () => {
 
     it('Checks for Visitor Counter', ()=>{
         cy.visit('https://chrisjohnson.tech')
-
+        
         cy.contains('You are visitor number')
 
         cy.get('[id=count]')
