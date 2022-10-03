@@ -31,7 +31,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0
 
       - run: gsutil mb gs://$GCS_BUCKET
-      - run: gcloud ch iam allUsers:objectViewer gs://$GCS_BUCKET
+      - run: gcloud iam ch allUsers:objectViewer gs://$GCS_BUCKET
 
       - id: 'sync_content'
         name: Sync Content to Test Bucket
