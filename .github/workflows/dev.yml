@@ -9,6 +9,7 @@ env:
   GCS_BUCKET: ${{ secrets.TEST_BUCKET }}
 
 permissions:
+  contents: 'read'
   id-token: write # This is required for requesting the JWT
 
 jobs:
@@ -37,8 +38,8 @@ jobs:
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
-      - name: Cypress run --spec ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
-        uses: cypress-io/github-action@v4 # use the explicit version number
-        with:
+      #- name: Cypress run --spec ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
+      #  uses: cypress-io/github-action@v4 # use the explicit version number
+      #  with:
           # Specify Browser since container image is compile with Firefox
-          browser: chrome
+      #    browser: chrome
