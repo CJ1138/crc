@@ -27,11 +27,10 @@ jobs:
           service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
 
       - uses: google-github-actions/setup-gcloud@v0
-        with:
-          project_id: ${{ secrets.PROD_PROJECT }}
 
       - id: 'sync_content'
         name: Sync Content to Test Bucket
+        run: gcloud config set project ${{ secrets.PROD_PROJECT }}
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
       # Install NPM dependencies, cache them correctly
