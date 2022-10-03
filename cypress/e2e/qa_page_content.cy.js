@@ -1,8 +1,10 @@
 /// <reference types="Cypress" />
 
+let bucket = ${{ secrets.TEST_BUCKET }}
+
 describe('Page Content Loads Correctly', () => {
     it('Finds the words "Professional Experience"', ()=>{
-        cy.visit('https://storage.googleapis.com/${{ secrets.TEST_BUCKET }}/index.html')
+        cy.visit('https://storage.googleapis.com/' + bucket + '/index.html')
 
         cy.contains("Professional Experience")
     })
