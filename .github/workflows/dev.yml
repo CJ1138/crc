@@ -16,19 +16,19 @@ jobs:
         name: Checkout Repo
         uses: actions/checkout@v2
 
-      - uses: google-github-actions/setup-gcloud@v0
+      - id: 'auth'
+        name: Authorise with GCP
+        uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCS_SA_KEY }}
           project_id: ${{ secrets.TEST_PROJECT }}
           export_default_credentials: true
+
+      - id: 'sync_content'
+        name: Sync Content to Test Bucket
       - run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
-  cypress-run:
-    runs-on: ubuntu-latest
     container: cypress/browsers:node12.18.3-chrome87-ff82
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
