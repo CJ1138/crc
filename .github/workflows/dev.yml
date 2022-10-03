@@ -44,3 +44,9 @@ jobs:
           browser: chrome
     
       - run: gsutil rm -r gs://$GCS_BUCKET
+
+      - name: create pull request
+      
+      - run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
