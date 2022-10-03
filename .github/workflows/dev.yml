@@ -20,7 +20,6 @@ jobs:
           export_default_credentials: true
       - run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
-jobs:
   cypress-run:
     runs-on: ubuntu-latest
     container: cypress/browsers:node12.18.3-chrome87-ff82
