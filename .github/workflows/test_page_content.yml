@@ -19,5 +19,5 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v4 # use the explicit version number
         with:
-          # Specify Browser since container image is compile with Firefox
+          spec: ${{ github.workspace }}/cypress/e2e/test_page_content.cy.js
           browser: chrome
