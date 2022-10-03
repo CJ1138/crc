@@ -15,7 +15,6 @@ permissions:
 jobs:
   qa-deploy_and_test:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
       - id: 'checkout'
         name: Checkout Repo
@@ -39,4 +38,5 @@ jobs:
         uses: cypress-io/github-action@v4 # use the explicit version number
         with:
           # Specify Browser since container image is compile with Firefox
+          container: cypress/browsers:node12.18.3-chrome87-ff82
           browser: chrome
