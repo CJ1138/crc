@@ -34,9 +34,9 @@ jobs:
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
-      - name: Cypress run --spec '${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js'
+      - name: Cypress
         uses: cypress-io/github-action@v4 # use the explicit version number
         with:
-          # Specify Browser since container image is compile with Firefox
-          container: cypress/browsers:node12.18.3-chrome87-ff82
+          with:
+          spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
