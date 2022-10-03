@@ -11,6 +11,7 @@ env:
 jobs:
   qa-deploy_and_test:
     runs-on: ubuntu-latest
+    container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
       - id: 'checkout'
         name: Checkout Repo
@@ -27,8 +28,6 @@ jobs:
       - id: 'sync_content'
         name: Sync Content to Test Bucket
       - run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
-
-    container: cypress/browsers:node12.18.3-chrome87-ff82
 
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
