@@ -2,13 +2,13 @@
 
 describe('Page Content Loads Correctly', () => {
     it('Finds the words "Professional Experience"', ()=>{
-        cy.visit('gs://crc-test-bucket')
+        cy.visit('https://storage.googleapis.com/crc-test-bucket/index.html')
 
         cy.contains("Professional Experience")
     })
 
     it('Checks the blog link', ()=>{
-        cy.visit('gs://crc-test-bucket')
+        cy.visit('https://storage.googleapis.com/crc-test-bucket/index.html')
 
         cy.contains('Technical Blog')//.click()
 
@@ -16,7 +16,7 @@ describe('Page Content Loads Correctly', () => {
     })
 
     it('Checks for Visitor Counter', ()=>{
-        cy.visit('gs://crc-test-bucket')
+        cy.visit('https://storage.googleapis.com/crc-test-bucket/index.html')
 
         cy.contains('You are visitor number')
 
