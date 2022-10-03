@@ -26,9 +26,10 @@ jobs:
           workload_identity_provider: 'principalSet://iam.googleapis.com/projects/757581767293/locations/global/workloadIdentityPools/test-wif-pool/*'
           service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
 
+      - uses: google-github-actions/setup-gcloud@v0
+      
       - id: 'sync_content'
         name: Sync Content to Test Bucket
-        uses: google-github-actions/setup-gcloud@v0
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
       # Install NPM dependencies, cache them correctly
