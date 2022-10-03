@@ -9,10 +9,13 @@ env:
   GCS_BUCKET: ${{ secrets.TEST_BUCKET }}
 
 jobs:
-  update_site:
+  qa-deploy_and_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - id: 'checkout'
+        name: Checkout Repo
+        uses: actions/checkout@v2
+
       - uses: google-github-actions/setup-gcloud@v0
         with:
           service_account_key: ${{ secrets.GCS_SA_KEY }}
