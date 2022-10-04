@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - main
+    
 env:
   GCS_BUCKET: ${{ secrets.PROD_BUCKET }}
 
