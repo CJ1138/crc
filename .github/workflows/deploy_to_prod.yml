@@ -33,5 +33,4 @@ jobs:
 
       - id: sync_content
         name: Sync content to prod bucket
-        run: gcloud storage ls
-        #run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
