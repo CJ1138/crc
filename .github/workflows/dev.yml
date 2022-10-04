@@ -10,7 +10,7 @@ env:
 
 permissions:
   contents: 'read'
-  id-token: write # This is required for requesting the JWT
+  id-token: write
 
 jobs:
   qa_deploy_and_test:
@@ -53,6 +53,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
 
       - id: delete-bucket
-        name: remove test bucket From project
+        name: remove test bucket from project
         if: ${{ always() }}
         run: gsutil rm -r gs://$GCS_BUCKET

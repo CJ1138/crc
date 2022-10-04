@@ -7,14 +7,29 @@ on:
 env:
   GCS_BUCKET: ${{ secrets.PROD_BUCKET }}
 
+permissions:
+  contents: 'read'
+  id-token: write
+
 jobs:
   update_site:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@v0
+      - id: checkout
+        name: checkout repo
+        uses: actions/checkout@v2
+
+      - id: auth
+        name: authorise with GCP project
+        uses: google-github-actions/auth@v0
         with:
-          service_account_key: ${{ secrets.GCS_SA_KEY }}
-          project_id: ${{ secrets.PROD_PROJECT }}
-          export_default_credentials: true
-      - run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+          workload_identity_provider: 'projects/358844651335/locations/global/workloadIdentityPools/prod-pool/providers/github-actions'
+          service_account: 'crc-github-runner@chris-personal-356410.iam.gserviceaccount.com'
+
+      - id: setup-gcloud
+        name: setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+
+      - id: sync_content
+        name: sync content to test bucket
+        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
