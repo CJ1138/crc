@@ -54,5 +54,5 @@ jobs:
 
       - id: delete-bucket
         name: remove test bucket From project
-        if: if: ${{ always() }}
+        if: ${{ always() }}
         run: gsutil rm -r gs://$GCS_BUCKET
