@@ -45,13 +45,14 @@ jobs:
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
-    
-      - id: delete-bucket
-        name: remove test bucket From project
-        run: gsutil rm -r gs://$GCS_BUCKET
 
       - id: create-pr
         name: create pull request
         run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
+
+      - id: delete-bucket
+        name: remove test bucket From project
+        if: if: ${{ always() }}
+        run: gsutil rm -r gs://$GCS_BUCKET
