@@ -16,20 +16,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
-        name: checkout repo
+        name: Checkout repo
         uses: actions/checkout@v2
 
       - id: auth
-        name: authorise with GCP project
+        name: Authorise with GCP project
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/358844651335/locations/global/workloadIdentityPools/prod-pool/providers/github-actions'
           service_account: 'crc-github-runner@chris-personal-356410.iam.gserviceaccount.com'
 
       - id: setup-gcloud
-        name: setup gcloud
+        name: Setup gcloud
         uses: google-github-actions/setup-gcloud@v0
 
       - id: sync_content
-        name: sync content to test bucket
+        name: Sync content to prod bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
