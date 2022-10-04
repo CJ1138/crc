@@ -7,17 +7,17 @@ on:
       - completed
 
 jobs:
-  cypress-run:
+  test-live-site:
     runs-on: ubuntu-latest
-    container: cypress/browsers:node12.18.3-chrome87-ff82
     steps:
-      - name: Checkout
+      - id: checkout
+        name: checkout repo
         uses: actions/checkout@v2
 
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress run
-        uses: cypress-io/github-action@v4 # use the explicit version number
+
+      - id: live-page-test
+        name: test site in production
+        uses: cypress-io/github-action@v4
         with:
-          spec: ${{ github.workspace }}/cypress/e2e/test_page_content.cy.js
+          spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
           browser: chrome
