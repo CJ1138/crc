@@ -16,36 +16,42 @@ jobs:
   qa_deploy_and_test:
     runs-on: ubuntu-latest
     steps:
-      - id: 'checkout'
-        name: Checkout Repo
+      - id: checkout
+        name: checkout repo
         uses: actions/checkout@v2
 
       - id: auth
-        name: Authorise with GCP Project
+        name: authorise with GCP project
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/757581767293/locations/global/workloadIdentityPools/test-wif-pool/providers/test-wif-provider'
           service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
 
-      - name: Setup gcloud
+      - id: setup-gcloud
+        name: setup gcloud
         uses: google-github-actions/setup-gcloud@v0
 
-      - run: gsutil mb gs://$GCS_BUCKET
-      - run: gsutil iam ch allUsers:objectViewer gs://$GCS_BUCKET
+      - id: create-bucket
+        name: create bucket and make public
+        run: gsutil mb gs://$GCS_BUCKET && gsutil iam ch allUsers:objectViewer gs://$GCS_BUCKET
 
-      - id: 'sync_content'
-        name: Sync Content to Test Bucket
+      - id: sync_content
+        name: sync content to test bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
-      - name: Run Page Content Tests
-        uses: cypress-io/github-action@v4 # use the explicit version number
+      - id: page-tests
+        name: run page content tests
+        uses: cypress-io/github-action@v4
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
     
-      - run: gsutil rm -r gs://$GCS_BUCKET
+      - id: delete-bucket
+        name: remove test bucket From project
+        run: gsutil rm -r gs://$GCS_BUCKET
 
-      - name: create pull request
+      - id: create-pr
+        name: create pull request
         run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
