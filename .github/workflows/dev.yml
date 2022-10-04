@@ -52,7 +52,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
 
-      - id: delete-bucket
-        name: Remove test bucket from project
-        if: ${{ always() }}
-        run: gsutil rm -r gs://$GCS_BUCKET
+      #- id: delete-bucket
+      #  name: Remove test bucket from project
+      #  if: ${{ always() }}
+      #  run: gsutil rm -r gs://$GCS_BUCKET
