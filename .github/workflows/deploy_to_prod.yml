@@ -4,7 +4,7 @@ on:
   push:
     branches:
     - main
-    
+
 env:
   GCS_BUCKET: ${{ secrets.PROD_BUCKET }}
 
@@ -33,4 +33,5 @@ jobs:
 
       - id: sync_content
         name: Sync content to prod bucket
-        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+        run: gcloud storage ls
+        #run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
