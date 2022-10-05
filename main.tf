@@ -25,6 +25,16 @@ resource "google_project_service" "dns_api" {
     service = "dns.googleapis.com"
 }
 
+resource "google_project_service" "storage_api" {
+    project = "crc-prod-site"
+    service = "storage.googleapis.com"
+}
+
+resource "google_project_service" "compute_api" {
+    project = "crc-prod-site"
+    service = "compute.googleapis.com"
+}
+
 #Allow internet traffic
 resource "google_compute_firewall" "http" {
   name    = "default-allow-http"
@@ -52,19 +62,7 @@ resource "google_compute_firewall" "https" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-/*
-Run first time in new project
-Left enabled as delay in re-enabling causing issues
-resource "google_project_service" "compute_api" {
-    project = "crc-prod-site"
-    service = "compute.googleapis.com"
-}
-*/
-
 #Workload Identity Federation
-/*
-Run first time in new project
-Commenting out as 'terraform destroy' soft deletes but 'terraform apply' will not undelete
 
 resource "google_iam_workload_identity_pool" "identity_pool" {
     workload_identity_pool_id = "prod-pool"
@@ -84,7 +82,6 @@ resource "google_iam_workload_identity_pool_provider" "github_wi_provider" {
         issuer_uri          = "https://token.actions.githubusercontent.com"  
     }
 }
-*/
 
 #Create service accounts and assign roles
 resource "google_service_account" "gh_actions_account" {
