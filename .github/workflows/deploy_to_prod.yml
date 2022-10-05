@@ -24,8 +24,8 @@ jobs:
         name: Authorise with GCP project
         uses: google-github-actions/auth@v0
         with:
-          workload_identity_provider: 'projects/358844651335/locations/global/workloadIdentityPools/prod-pool/providers/github-actions'
-          service_account: 'crc-github-runner@chris-personal-356410.iam.gserviceaccount.com'
+          workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+          service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
 
       - id: setup-gcloud
         name: Setup gcloud
