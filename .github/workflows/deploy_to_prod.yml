@@ -41,14 +41,14 @@ jobs:
       - id: tf_init
         name: Terraform init
         run: terraform init
-          env: 
-            GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
+        env: 
+          GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
 
       - id: tf_plan
         name: Terraform plan
         run: terraform plan
-          env: 
-            GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
+        env: 
+          GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
 
       - id: auth
         name: Authorise with GCP project
