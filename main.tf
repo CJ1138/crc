@@ -74,9 +74,9 @@ resource "google_iam_workload_identity_pool_provider" "github_wi_provider" {
     workload_identity_pool_provider_id  = "github-provider"
     display_name                        = "GitHub Actions"
     attribute_mapping = {
-        "google.subject"    = "assertion.sub"
-        "attribute.actor"   = "assertion.actor"
-        "attribute.aud"     = "assertion.aud"
+        "google.subject"        = "assertion.sub"
+        "attribute.actor"       = "assertion.actor"
+        "attribute.repository"    = "assertion.repository"
     }
     oidc {
         issuer_uri          = "https://token.actions.githubusercontent.com"  
@@ -225,6 +225,21 @@ resource "google_dns_record_set" "resume-www-dns" {
   type         = "CNAME"
   rrdatas      = ["chrisjohnson.tech."]
   ttl          = 300
+}
+
+# Adding Terraform remote bucket
+resource "random_id" "bucket_prefix" {
+  byte_length = 8
+}
+
+resource "google_storage_bucket" "default" {
+  name          = "${random_id.bucket_prefix.hex}-bucket-tfstate"
+  force_destroy = false
+  location      = "EU"
+  storage_class = "STANDARD"
+  versioning {
+    enabled = true
+  }
 }
 
 #Reference outputs
