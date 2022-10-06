@@ -16,6 +16,10 @@ jobs:
   invalidate_cdn_cache:
     runs-on: ubuntu-latest
     steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
+        
       - id: auth
         name: Authorise with GCP project
         uses: google-github-actions/auth@v0
@@ -44,9 +48,9 @@ jobs:
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
 
-      - id: tf_plan
-        name: Terraform plan
-        run: terraform plan
+      - id: tf_apply
+        name: Terraform apply
+        run: terraform apply
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
 
