@@ -34,6 +34,22 @@ jobs:
         name: Checkout repo
         uses: actions/checkout@v2
 
+      - id: set_up_terraform
+        name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+      
+      - id: tf_init
+        name: Terraform init
+        run: terraform init
+          env: 
+            GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
+
+      - id: tf_plan
+        name: Terraform plan
+        run: terraform plan
+          env: 
+            GOOGLE_CREDENTIALS: ${{ TF_GCP_CREDS }}
+
       - id: auth
         name: Authorise with GCP project
         uses: google-github-actions/auth@v0

@@ -1,10 +1,17 @@
 #Setup GCP Provider
 provider "google" {
   project     = "crc-prod-site"
+  #credentials = "crc-prod-site-73c64b898706.json"
   region      = "eu-west2"
 }
 
 #Enable required APIs
+resource "google_project_service" "serviceusage" {
+  project = "crc-prod-site"
+  service = "serviceusage.googleapis.com"
+  disable_dependent_services = true
+}
+
 resource "google_project_service" "cloud_asset_api" {
     project = "crc-prod-site"
     service = "cloudasset.googleapis.com"
@@ -89,6 +96,17 @@ resource "google_service_account" "gh_actions_account" {
     display_name = "GitHub Actions Runner"
 }
 
+resource "google_service_account" "tf_service_account" {
+    account_id  = "terraform-service-account"
+    display_name = "Terraform Service Account"
+}
+
+resource "google_project_iam_member" "tf_editor" {
+  project = "crc-prod-site"
+  role    = "roles/owner"
+  member  = "serviceAccount:terraform-service-account@crc-prod-site.iam.gserviceaccount.com"
+}
+
 resource "google_project_iam_member" "cloud_asset_owner" {
   project = "crc-prod-site"
   role    = "roles/cloudasset.owner"
@@ -98,6 +116,12 @@ resource "google_project_iam_member" "cloud_asset_owner" {
 resource "google_project_iam_member" "storage_admin" {
   project = "crc-prod-site"
   role    = "roles/storage.admin"
+  member  = "serviceAccount:github-actions-runner@crc-prod-site.iam.gserviceaccount.com"
+}
+
+resource "google_project_iam_member" "lb_admin" {
+  project = "crc-prod-site"
+  role    = "roles/compute.loadBalancerAdmin"
   member  = "serviceAccount:github-actions-runner@crc-prod-site.iam.gserviceaccount.com"
 }
 
@@ -228,12 +252,9 @@ resource "google_dns_record_set" "resume-www-dns" {
 }
 
 # Adding Terraform remote bucket
-resource "random_id" "bucket_prefix" {
-  byte_length = 8
-}
 
 resource "google_storage_bucket" "default" {
-  name          = "${random_id.bucket_prefix.hex}-bucket-tfstate"
+  name          = "678d7968b717b2a4-bucket-tfstate"
   force_destroy = false
   location      = "EU"
   storage_class = "STANDARD"
