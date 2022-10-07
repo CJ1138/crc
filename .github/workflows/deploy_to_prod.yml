@@ -31,7 +31,7 @@ jobs:
         name: Invalidate CDN cache
         run: gcloud compute url-maps invalidate-cdn-cache https-url-map --path "/*" --async
 
-  update_site:
+  provision_resources:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -54,17 +54,21 @@ jobs:
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
 
-      - id: auth
-        name: Authorise with GCP project
-        uses: google-github-actions/auth@v0
-        with:
-          workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
-          service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
+  update_site:
+    needs: [provision_resources]
+    runs-on: ubuntu-latest
+    steps:
+    - id: auth
+      name: Authorise with GCP project
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+        service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
 
-      - id: setup-gcloud
-        name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v0
+    - id: setup-gcloud
+      name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v0
 
-      - id: sync_content
-        name: Sync content to prod bucket
-        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+    - id: sync_content
+      name: Sync content to prod bucket
+      run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
