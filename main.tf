@@ -1,45 +1,44 @@
 #Setup GCP Provider
 provider "google" {
-  project     = "crc-prod-site"
-  #credentials = "crc-prod-site-73c64b898706.json"
-  region      = "eu-west2"
+  project = "crc-prod-site"
+  region = "eu-west2"
 }
 
 #Enable required APIs
 resource "google_project_service" "serviceusage" {
-  project = "crc-prod-site"
-  service = "serviceusage.googleapis.com"
+  project                    = "crc-prod-site"
+  service                    = "serviceusage.googleapis.com"
   disable_dependent_services = true
 }
 
 resource "google_project_service" "cloud_asset_api" {
-    project = "crc-prod-site"
-    service = "cloudasset.googleapis.com"
+  project = "crc-prod-site"
+  service = "cloudasset.googleapis.com"
 }
 
 resource "google_project_service" "iam_creds_api" {
-    project = "crc-prod-site"
-    service = "iamcredentials.googleapis.com"
+  project = "crc-prod-site"
+  service = "iamcredentials.googleapis.com"
 }
 
 resource "google_project_service" "sec_token_api" {
-    project = "crc-prod-site"
-    service = "sts.googleapis.com"
+  project = "crc-prod-site"
+  service = "sts.googleapis.com"
 }
 
 resource "google_project_service" "dns_api" {
-    project = "crc-prod-site"
-    service = "dns.googleapis.com"
+  project = "crc-prod-site"
+  service = "dns.googleapis.com"
 }
 
 resource "google_project_service" "storage_api" {
-    project = "crc-prod-site"
-    service = "storage.googleapis.com"
+  project = "crc-prod-site"
+  service = "storage.googleapis.com"
 }
 
 resource "google_project_service" "compute_api" {
-    project = "crc-prod-site"
-    service = "compute.googleapis.com"
+  project = "crc-prod-site"
+  service = "compute.googleapis.com"
 }
 
 #Allow internet traffic
@@ -72,33 +71,33 @@ resource "google_compute_firewall" "https" {
 #Workload Identity Federation
 
 resource "google_iam_workload_identity_pool" "identity_pool" {
-    workload_identity_pool_id = "prod-pool"
-    display_name              = "Production WI Pool"          
+  workload_identity_pool_id = "prod-pool"
+  display_name              = "Production WI Pool"
 }
 
 resource "google_iam_workload_identity_pool_provider" "github_wi_provider" {
-    workload_identity_pool_id           = google_iam_workload_identity_pool.identity_pool.workload_identity_pool_id
-    workload_identity_pool_provider_id  = "github-provider"
-    display_name                        = "GitHub Actions"
-    attribute_mapping = {
-        "google.subject"        = "assertion.sub"
-        "attribute.actor"       = "assertion.actor"
-        "attribute.repository"    = "assertion.repository"
-    }
-    oidc {
-        issuer_uri          = "https://token.actions.githubusercontent.com"  
-    }
+  workload_identity_pool_id          = google_iam_workload_identity_pool.identity_pool.workload_identity_pool_id
+  workload_identity_pool_provider_id = "github-provider"
+  display_name                       = "GitHub Actions"
+  attribute_mapping = {
+    "google.subject"       = "assertion.sub"
+    "attribute.actor"      = "assertion.actor"
+    "attribute.repository" = "assertion.repository"
+  }
+  oidc {
+    issuer_uri = "https://token.actions.githubusercontent.com"
+  }
 }
 
 #Create service accounts and assign roles
 resource "google_service_account" "gh_actions_account" {
-    account_id  = "github-actions-runner"
-    display_name = "GitHub Actions Runner"
+  account_id   = "github-actions-runner"
+  display_name = "GitHub Actions Runner"
 }
 
 resource "google_service_account" "tf_service_account" {
-    account_id  = "terraform-service-account"
-    display_name = "Terraform Service Account"
+  account_id   = "terraform-service-account"
+  display_name = "Terraform Service Account"
 }
 
 resource "google_project_iam_member" "tf_editor" {
@@ -138,11 +137,11 @@ resource "google_service_account_iam_binding" "service-account-iam" {
 
 #Create storage bucket and make public
 resource "google_storage_bucket" "crc-resume-bucket" {
-    name            = "crc-prod-bucket"
-    location        = "EU"
-    force_destroy   = true
+  name          = "crc-prod-bucket"
+  location      = "EU"
+  force_destroy = true
 
-    website {
+  website {
     main_page_suffix = "index.html"
     not_found_page   = "404.html"
   }
@@ -151,7 +150,7 @@ resource "google_storage_bucket" "crc-resume-bucket" {
 
 resource "google_storage_bucket_iam_member" "public-rule" {
   bucket = google_storage_bucket.crc-resume-bucket.name
-  role = "roles/storage.objectViewer"
+  role   = "roles/storage.objectViewer"
   member = "allUsers"
 }
 
@@ -176,8 +175,8 @@ resource "google_compute_backend_bucket" "resume-bucket" {
 }
 
 resource "google_compute_url_map" "https-url-map" {
-  name        = "https-url-map"
-  description = "Load Balancer https URL map"
+  name            = "https-url-map"
+  description     = "Load Balancer https URL map"
   default_service = google_compute_backend_bucket.resume-bucket.id
 }
 
@@ -261,17 +260,4 @@ resource "google_storage_bucket" "default" {
   versioning {
     enabled = true
   }
-}
-
-#Reference outputs
-output "static_ip" {
-    value = google_compute_global_address.lb-ip.address
-}
-
-output "ssl_cert" {
-    value = google_compute_managed_ssl_certificate.resume-ssl.id
-}
-
-output "bucket_url" {
-    value = google_storage_bucket.crc-resume-bucket.url
 }
