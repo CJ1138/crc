@@ -35,3 +35,47 @@ jobs:
         run: terraform plan
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
+
+  qa_deploy_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
+
+      - id: auth
+        name: Authorise with GCP project
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/757581767293/locations/global/workloadIdentityPools/test-wif-pool/providers/test-wif-provider'
+          service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
+
+      - id: setup-gcloud
+        name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+
+      - id: create-bucket
+        name: Create bucket and make public
+        run: gsutil mb gs://$GCS_BUCKET && gsutil iam ch allUsers:objectViewer gs://$GCS_BUCKET
+
+      - id: sync_content
+        name: Sync content to test bucket
+        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+
+      - id: page-tests
+        name: Run page content tests
+        uses: cypress-io/github-action@v4
+        with:
+          spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
+          browser: chrome
+
+      - id: create-pr
+        name: Create pull request
+        run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
+
+      - id: delete-bucket
+        name: Remove test bucket from project
+        if: ${{ always() }}
+        run: gsutil rm -r gs://$GCS_BUCKET
