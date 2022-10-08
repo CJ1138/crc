@@ -101,12 +101,6 @@ resource "google_service_account" "tf_service_account" {
     display_name = "Terraform Service Account"
 }
 
-resource "google_project_iam_member" "cloud_asset_owner" {
-  project = "crc-prod-site"
-  role    = "roles/cloudasset.owner"
-  member  = "serviceAccount:github-actions-runner@crc-prod-site.iam.gserviceaccount.com"
-}
-
 resource "google_project_iam_member" "storage_admin" {
   project = "crc-prod-site"
   role    = "roles/storage.admin"
