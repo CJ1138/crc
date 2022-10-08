@@ -57,6 +57,10 @@ jobs:
     needs: [invalidate_cdn_cache]
     runs-on: ubuntu-latest
     steps:
+    - id: checkout
+      name: Checkout repo
+      uses: actions/checkout@v2
+      
     - id: auth
       name: Authorise with GCP project
       uses: google-github-actions/auth@v0
