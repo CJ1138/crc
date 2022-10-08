@@ -101,12 +101,6 @@ resource "google_service_account" "tf_service_account" {
     display_name = "Terraform Service Account"
 }
 
-resource "google_project_iam_member" "tf_editor" {
-  project = "crc-prod-site"
-  role    = "roles/owner"
-  member  = "serviceAccount:terraform-service-account@crc-prod-site.iam.gserviceaccount.com"
-}
-
 resource "google_project_iam_member" "cloud_asset_owner" {
   project = "crc-prod-site"
   role    = "roles/cloudasset.owner"
