@@ -13,25 +13,7 @@ permissions:
   id-token: 'write'
 
 jobs:
-  invalidate_cdn_cache:
-    runs-on: ubuntu-latest
-    steps:
-      - id: checkout
-        name: Checkout repo
-        uses: actions/checkout@v2
-        
-      - id: auth
-        name: Authorise with GCP project
-        uses: google-github-actions/auth@v0
-        with:
-          workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
-          service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
-
-      - id: invalidate-cdn
-        name: Invalidate CDN cache
-        run: gcloud compute url-maps invalidate-cdn-cache https-url-map --path "/*" --async
-
-  update_site:
+  provision_resources:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -50,21 +32,57 @@ jobs:
 
       - id: tf_apply
         name: Terraform apply
-        run: terraform apply
+        run: terraform apply -auto-approve -input=false
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
-
+  invalidate_cdn_cache:
+    needs: [provision_resources]
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
+        
       - id: auth
         name: Authorise with GCP project
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
           service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
+      - id: invalidate-cdn
+        name: Invalidate CDN cache
+        run: gcloud compute url-maps invalidate-cdn-cache https-url-map --path "/*" --async
 
-      - id: setup-gcloud
-        name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v0
+  update_site:
+    needs: [invalidate_cdn_cache]
+    runs-on: ubuntu-latest
+    steps:
+    - id: auth
+      name: Authorise with GCP project
+      uses: google-github-actions/auth@v0
+      with:
+        workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
+        service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
 
-      - id: sync_content
-        name: Sync content to prod bucket
-        run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+    - id: setup-gcloud
+      name: Setup gcloud
+      uses: google-github-actions/setup-gcloud@v0
+
+    - id: sync_content
+      name: Sync content to prod bucket
+      run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
+
+  test-live-site:
+    needs: [update_site]
+    runs-on: ubuntu-latest
+    steps:
+    - id: checkout
+      name: Checkout repo
+      uses: actions/checkout@v2
+
+    - id: live-page-test
+      name: Test site in production
+      uses: cypress-io/github-action@v4
+      with:
+        spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
+        browser: chrome
