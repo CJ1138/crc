@@ -16,7 +16,7 @@ describe('Page Content Loads Correctly', () => {
     })
 
     it('Checks for Visitor Counter', ()=>{
-        cy.visit(Cypress.env('resume_PAGE'))
+        cy.visit(Cypress.env('RESUME_PAGE'))
 
         cy.contains('You are visitor number')
 
