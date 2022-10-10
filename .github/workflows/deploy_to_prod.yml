@@ -7,6 +7,7 @@ on:
 
 env:
   GCS_BUCKET: ${{ secrets.PROD_BUCKET }}
+  TEST_URL: 'https://chrisjohnson.tech'
 
 permissions:
   contents: 'read'
@@ -89,6 +90,8 @@ jobs:
     - id: live-page-test
       name: Test site in production
       uses: cypress-io/github-action@v4
+      env:
+        CYPRESS_resume_site: $TEST_URL
       with:
         spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
         browser: chrome
