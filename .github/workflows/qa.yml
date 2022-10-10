@@ -67,7 +67,7 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
-          env: resume_page='https://chrisjohnson.tech'
+          env: CYPRESS_resume_page='https://chrisjohnson.tech'
           browser: chrome
 
       - id: create-pr
