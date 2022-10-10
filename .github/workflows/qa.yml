@@ -66,6 +66,7 @@ jobs:
         name: Run page content tests
         uses: cypress-io/github-action@v4
         with:
+          env: resume_page='https://chrisjohnson.tech'
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
 
