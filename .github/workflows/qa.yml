@@ -7,6 +7,7 @@ on:
 
 env:
   GCS_BUCKET: ${{ secrets.TEST_BUCKET }}
+  cypress_resume_page: https://chrisjohnson.tech
 
 permissions:
   contents: 'read'
