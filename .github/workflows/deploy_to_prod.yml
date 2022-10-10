@@ -79,6 +79,8 @@ jobs:
   test-live-site:
     needs: [update_site]
     runs-on: ubuntu-latest
+    env:
+        cypress_resume_page: https://chrisjohnson.tech
     steps:
     - id: checkout
       name: Checkout repo
@@ -87,8 +89,6 @@ jobs:
     - id: live-page-test
       name: Test site in production
       uses: cypress-io/github-action@v4
-      env:
-        cypress_resume_page: https://chrisjohnson.tech
       with:
         spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
         browser: chrome
