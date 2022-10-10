@@ -65,11 +65,11 @@ jobs:
       - id: page-tests
         name: Run page content tests
         uses: cypress-io/github-action@v4
-        env:
-          CYPRESS_resume_page: 'https://chrisjohnson.tech'
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
+        env:
+          CYPRESS_RESUME_PAGE: https://chrisjohnson.tech
 
       - id: create-pr
         name: Create pull request

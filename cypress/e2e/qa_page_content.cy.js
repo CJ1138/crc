@@ -2,13 +2,13 @@
 
 describe('Page Content Loads Correctly', () => {
     it('Finds the words "Professional Experience"', ()=>{
-        cy.visit(Cypress.env('resume_site'))
+        cy.visit(Cypress.env('RESUME_PAGE'))
 
         cy.contains("Professional Experience")
     })
 
     it('Checks the blog link', ()=>{
-        cy.visit(Cypress.env('resume_site'))
+        cy.visit(Cypress.env('RESUME_SITE'))
 
         cy.contains('Technical Blog')//.click()
 
