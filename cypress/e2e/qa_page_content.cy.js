@@ -8,7 +8,7 @@ describe('Page Content Loads Correctly', () => {
     })
 
     it('Checks the blog link', ()=>{
-        cy.visit(Cypress.env('RESUME_SITE'))
+        cy.visit(Cypress.env('RESUME_PAGE'))
 
         cy.contains('Technical Blog')//.click()
 
@@ -16,7 +16,7 @@ describe('Page Content Loads Correctly', () => {
     })
 
     it('Checks for Visitor Counter', ()=>{
-        cy.visit(Cypress.env('resume_site'))
+        cy.visit(Cypress.env('resume_PAGE'))
 
         cy.contains('You are visitor number')
 
