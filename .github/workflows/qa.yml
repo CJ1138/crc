@@ -78,13 +78,17 @@ jobs:
       - id: checkout
         name: Checkout repo
         uses: actions/checkout@v2
-            
+
       - id: auth
         name: Authorise with GCP project
         uses: google-github-actions/auth@v0
         with:
           workload_identity_provider: 'projects/757581767293/locations/global/workloadIdentityPools/test-wif-pool/providers/test-wif-provider'
           service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
+
+      - id: setup-gcloud
+        name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
 
       - id: delete-bucket
         name: Remove test bucket from project
