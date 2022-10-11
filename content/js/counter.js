@@ -1,5 +1,5 @@
 function counter(){
-    fetch('https://crc-api-gateway-5fntyvv6.nw.gateway.dev/visits?key=AIzaSyA38RA8DbOaT-7mVFSIRuC9-rx7qmJ537g', {
+    fetch('https://vc-api-gw-azia0w6p.nw.gateway.dev/visits?key=AIzaSyB6XidRlzrbQrGdIVOCTBiNUeVFp2SXQaY', {
     method: 'POST'})
     .then((response) => response.json())
     .then((data) => {
