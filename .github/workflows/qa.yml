@@ -13,30 +13,7 @@ permissions:
   id-token: write
 
 jobs:
-  terraform_plan:
-    runs-on: ubuntu-latest
-    steps: 
-      - id: checkout
-        name: Checkout repo
-        uses: actions/checkout@v2
-
-      - id: set_up_terraform
-        name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-      
-      - id: tf_init
-        name: Terraform init
-        run: terraform init
-        env: 
-          GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
-
-      - id: tf_plan
-        name: Terraform plan
-        run: terraform plan
-        env: 
-          GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
-
-  qa_deploy_and_test:
+  deploy_test_site:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -62,14 +39,30 @@ jobs:
         name: Sync content to test bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
+  test_page_content:
+    needs: [deploy_test_site]
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
+
       - id: page-tests
         name: Run page content tests
         uses: cypress-io/github-action@v4
+        env:
+          CYPRESS_RESUME_PAGE: 'https://storage.googleapis.com/crc-test-bucket/index.html'
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
-        env:
-          CYPRESS_RESUME_PAGE: https://storage.googleapis.com/${{ secrets.TEST_BUCKET }}/index.html
+  
+  create_pr:
+    needs: [test_page_content]
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
 
       - id: create-pr
         name: Create pull request
@@ -77,7 +70,26 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
 
+  rm_test_bucket:
+    needs: [test_page_content]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout repo
+        uses: actions/checkout@v2
+
+      - id: auth
+        name: Authorise with GCP project
+        uses: google-github-actions/auth@v0
+        with:
+          workload_identity_provider: 'projects/757581767293/locations/global/workloadIdentityPools/test-wif-pool/providers/test-wif-provider'
+          service_account: 'github-actions-qa@crc-test-site.iam.gserviceaccount.com'
+
+      - id: setup-gcloud
+        name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v0
+
       - id: delete-bucket
         name: Remove test bucket from project
-        if: ${{ always() }}
         run: gsutil rm -r gs://$GCS_BUCKET

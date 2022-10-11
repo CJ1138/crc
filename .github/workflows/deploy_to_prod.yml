@@ -3,7 +3,8 @@ name: Deploy to Production
 on:
   push:
     branches:
-    - main
+      - main
+  pull_request:
 
 env:
   GCS_BUCKET: ${{ secrets.PROD_BUCKET }}
@@ -30,14 +31,59 @@ jobs:
         run: terraform init
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
+    
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+        continue-on-error: true
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}        
+
+      - name: Update Pull Request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.PR_TOKEN }}
+          script: |
+            const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+      
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
 
       - id: tf_apply
         name: Terraform apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -input=false
         env: 
           GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}
+
   invalidate_cdn_cache:
     needs: [provision_resources]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -50,6 +96,7 @@ jobs:
         with:
           workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
           service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
+
       - id: invalidate-cdn
         name: Invalidate CDN cache
         run: gcloud compute url-maps invalidate-cdn-cache https-url-map --path "/*" --async
@@ -80,8 +127,6 @@ jobs:
   test-live-site:
     needs: [update_site]
     runs-on: ubuntu-latest
-    env:
-        cypress_resume_page: https://chrisjohnson.tech
     steps:
     - id: checkout
       name: Checkout repo
@@ -91,7 +136,7 @@ jobs:
       name: Test site in production
       uses: cypress-io/github-action@v4
       env:
-        CYPRESS_resume_site: 'http://chrisjohnson.tech'
+        CYPRESS_RESUME_PAGE: 'http://chrisjohnson.tech'
       with:
         spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
         browser: chrome
