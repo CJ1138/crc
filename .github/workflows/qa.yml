@@ -68,8 +68,6 @@ jobs:
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
-        env:
-          CYPRESS_RESUME_PAGE: https://storage.googleapis.com/${{ secrets.TEST_BUCKET }}/index.html
 
       - id: create-pr
         name: Create pull request
