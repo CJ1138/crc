@@ -43,7 +43,7 @@ jobs:
         name: Run page content tests
         uses: cypress-io/github-action@v4
         env:
-          CYPRESS_resume_site: 'http://chrisjohnson.tech'
+          CYPRESS_RESUME_PAGE: 'https://storage.googleapis.com/crc-test-bucket/index.html'
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
