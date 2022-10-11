@@ -13,7 +13,7 @@ permissions:
   id-token: write
 
 jobs:
-  qa_deploy_and_test:
+  deploy_test_site:
     runs-on: ubuntu-latest
     steps:
       - id: checkout
@@ -39,6 +39,10 @@ jobs:
         name: Sync content to test bucket
         run: gsutil -m rsync -R ${{ github.workspace }}/content gs://$GCS_BUCKET
 
+  test_page_content:
+    needs: [deploy_test_site]
+    runs-on: ubuntu-latest
+    steps:
       - id: page-tests
         name: Run page content tests
         uses: cypress-io/github-action@v4
@@ -47,14 +51,22 @@ jobs:
         with:
           spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
           browser: chrome
-
+  
+  create_pr:
+    needs: [test_page_content]
+    runs-on: ubuntu-latest
+    steps:
       - id: create-pr
         name: Create pull request
         run: gh pr create -B main -H dev --title 'Merge dev into main' --body 'Created by Github action'
         env:
           GITHUB_TOKEN: ${{ secrets.PR_TOKEN }}
 
+  rm_test_bucket:
+    needs: [test_page_content]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
       - id: delete-bucket
         name: Remove test bucket from project
-        if: ${{ always() }}
         run: gsutil rm -r gs://$GCS_BUCKET
