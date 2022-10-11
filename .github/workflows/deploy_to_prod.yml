@@ -138,5 +138,5 @@ jobs:
       env:
         CYPRESS_RESUME_PAGE: 'http://chrisjohnson.tech'
       with:
-        spec: ${{ github.workspace }}/cypress/e2e/page_content.cy.js
+        spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
         browser: chrome
