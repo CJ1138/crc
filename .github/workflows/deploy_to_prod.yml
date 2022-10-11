@@ -37,6 +37,8 @@ jobs:
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
         continue-on-error: true
+        env: 
+          GOOGLE_CREDENTIALS: ${{ secrets.TF_GCP_CREDS }}        
 
       - name: Update Pull Request
         uses: actions/github-script@v6
@@ -94,7 +96,7 @@ jobs:
         with:
           workload_identity_provider: 'projects/613299291948/locations/global/workloadIdentityPools/prod-pool/providers/github-provider'
           service_account: 'github-actions-runner@crc-prod-site.iam.gserviceaccount.com'
-          
+
       - id: invalidate-cdn
         name: Invalidate CDN cache
         run: gcloud compute url-maps invalidate-cdn-cache https-url-map --path "/*" --async
