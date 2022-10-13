@@ -26,7 +26,7 @@ describe('Page Content Loads', () => {
                 throw error
             }
         })
-        
+
         cy.visit(Cypress.env('RESUME_PAGE'))
         //Loops through all links except email
         cy.get("a:not([href*='mailto:'])").each(page => {
@@ -39,7 +39,7 @@ describe('Page Content Loads', () => {
       cy.get('[id=col1]')
       .invoke('css', 'background-color')
       .then((bgcolor) => {
-        expect(rgbHex(bgcolor)).to.eq('536979')
+        expect(rgbHex(bgcolor)).to.eq('536978')
       })
     })
 
