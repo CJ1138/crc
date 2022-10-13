@@ -24,4 +24,13 @@ describe('Page Content Loads Correctly', () => {
         .invoke('text')
         .should('match', /^[0-9]*$/)
     })
+
+    it('check all links to sites', () => {
+
+        cy.visit(Cypress.env('RESUME_PAGE'))
+        cy.get("a:not([href*='mailto:'])").each(page => {
+          cy.request(page.prop('href'))
+        })
+      
+      });
 })
