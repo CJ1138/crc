@@ -8,6 +8,14 @@ describe('Page Content Loads', () => {
         cy.contains("Professional Experience")
     })
 
+    it('Checks background colour', () => {
+        cy.get('[id=col1]')
+        .invoke('css', 'background-color')
+        .then((bgcolor) => {
+          expect(rgbHex(bgcolor)).to.eq('536979')
+        })
+      })
+      
     it('Checks for Visitor Counter', {defaultCommandTimeout: 10000}, ()=>{
         cy.visit(Cypress.env('RESUME_PAGE'))
         //Checks vistor counter text displays
@@ -26,7 +34,6 @@ describe('Page Content Loads', () => {
                 throw error
             }
         })
-
         cy.visit(Cypress.env('RESUME_PAGE'))
         //Loops through all links except email
         cy.get("a:not([href*='mailto:'])").each(page => {
@@ -34,13 +41,4 @@ describe('Page Content Loads', () => {
         })
       
       });
-
-    it('Checks background colour', () => {
-      cy.get('[id=col1]')
-      .invoke('css', 'background-color')
-      .then((bgcolor) => {
-        expect(rgbHex(bgcolor)).to.eq('536978')
-      })
-    })
-
 })
