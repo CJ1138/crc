@@ -50,7 +50,6 @@ jobs:
           script: |
             const output = `
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
 
             <details><summary>Show Plan</summary>
 
@@ -135,7 +134,7 @@ jobs:
       name: Test site in production
       uses: cypress-io/github-action@v4
       env:
-        CYPRESS_RESUME_PAGE: $TEST_URL
+        CYPRESS_RESUME_PAGE: ${{ secrets.PROD_URL }}
       with:
         spec: ${{ github.workspace }}/cypress/e2e/qa_page_content.cy.js
         browser: chrome

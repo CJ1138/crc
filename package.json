@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/CJ1138/crc#readme",
   "devDependencies": {
-    "cypress": "^10.9.0"
+    "cypress": "^10.10.0",
+    "cypress-image-diff-js": "^1.22.0"
+  },
+  "dependencies": {
+    "rgb-hex": "^4.0.0"
   }
 }

@@ -4,6 +4,7 @@ on:
   push:
     branches:
     - dev
+    - content
 
 env:
   GCS_BUCKET: ${{ secrets.TEST_BUCKET }}
@@ -18,7 +19,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - id: auth
         name: Authorise with GCP project
@@ -45,7 +46,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - id: page-tests
         name: Run page content tests
@@ -62,7 +63,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - id: create-pr
         name: Create pull request
@@ -77,7 +78,7 @@ jobs:
     steps:
       - id: checkout
         name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - id: auth
         name: Authorise with GCP project
