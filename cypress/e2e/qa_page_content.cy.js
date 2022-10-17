@@ -15,7 +15,7 @@ describe('Page Content Loads', () => {
           expect(rgbHex(bgcolor)).to.eq('536979')
         })
       })
-      
+
     it('Checks for Visitor Counter', {defaultCommandTimeout: 10000}, ()=>{
         cy.visit(Cypress.env('RESUME_PAGE'))
         //Checks vistor counter text displays
