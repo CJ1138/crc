@@ -227,7 +227,7 @@ resource "google_dns_record_set" "blog-dns" {
   managed_zone = google_dns_managed_zone.personal-dns-zone.name
   name         = "blog.chrisjohnson.tech."
   type         = "A"
-  rrdatas      = ["35.234.151.199"]
+  rrdatas      = ["34.105.199.152"]
   ttl          = 300
 }
 
