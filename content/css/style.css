@@ -17,12 +17,17 @@ h2, h3 {
     color: #536979;
 }
 
+h3 {
+    margin-bottom: 0px;
+}
+
 p, li{
     font-size: 1.1em;
 }
 
 p{
     border-top: 0px;
+    margin-top: 2.5px;
 }
 a:visited {
     color: white;
