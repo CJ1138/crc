@@ -19,6 +19,7 @@ h2, h3 {
 
 h3 {
     margin-bottom: 0px;
+    font-weight: bold;
 }
 
 p, li{
@@ -29,12 +30,20 @@ p{
     border-top: 0px;
     margin-top: 2.5px;
 }
-a:visited {
+#col1 a:visited {
     color: white;
 }
 
-a {
+#col1 a {
     color: white;
+}
+
+#col2 a:visited {
+    color: #434343;
+}
+
+#col2 a {
+    color: #434343;
 }
 
 i{
